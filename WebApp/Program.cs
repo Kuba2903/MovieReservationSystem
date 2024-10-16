@@ -1,19 +1,28 @@
 using Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
+builder.Services.AddDbContext<MovieReservationSystemContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Server=HP;Database=MovieReservationSystem;Trusted_Connection=True;Trust Server Certificate=True")));
+
+//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MovieReservationSystemContext>();
+
+builder.Services.AddDefaultIdentity<IdentityUser>()
+    .AddRoles<IdentityRole>()                             
+    .AddEntityFrameworkStores<MovieReservationSystemContext>();
+
+
+builder.Services.AddMemoryCache();
+builder.Services.AddSession();
 var app = builder.Build();
 
-
-builder.Services.AddDbContext<MovieReservationSystemContext>();
-
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<MovieReservationSystemContext>()
-    .AddDefaultTokenProviders();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -28,7 +37,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
