@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Data.Models;
 
-namespace Data.Models;
+namespace Data;
 
-public partial class MovieReservationSystemContext : DbContext
+public partial class MovieReservationSystemContext : IdentityDbContext<IdentityUser>
 {
     public MovieReservationSystemContext()
     {
@@ -24,11 +27,12 @@ public partial class MovieReservationSystemContext : DbContext
     public virtual DbSet<ShowTime> ShowTimes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=HP;Database=MovieReservationSystem;Trusted_Connection=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Genre>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Genres__3213E83F22D4C0C1");
@@ -102,6 +106,54 @@ public partial class MovieReservationSystemContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__ShowTimes__movie__33D4B598");
         });
+
+
+        // creating roles
+
+        var adminRoleId = Guid.NewGuid().ToString();
+        var userRoleId = Guid.NewGuid().ToString();
+        modelBuilder.Entity<IdentityRole>().HasData(
+            new IdentityRole { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN" },
+            new IdentityRole { Id = userRoleId, Name = "User", NormalizedName = "USER" }
+        );
+
+        // creating users
+        var hasher = new PasswordHasher<IdentityUser>();
+
+
+        var adminId = Guid.NewGuid().ToString();
+        var user1 = new IdentityUser
+        {
+            UserName = "admin@example.com",
+            Email = "admin@example.com",
+            EmailConfirmed = true,
+            NormalizedUserName = "ADMIN@EXAMPLE.COM",
+            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+            Id = adminId
+        };
+        user1.PasswordHash = hasher.HashPassword(user1, "Password123!");
+
+
+        var userId = Guid.NewGuid().ToString();
+        var user2 = new IdentityUser
+        {
+            UserName = "user@example.com",
+            Email = "user@example.com",
+            EmailConfirmed = true,
+            NormalizedUserName = "USER@EXAMPLE.COM",
+            NormalizedEmail = "USER@EXAMPLE.COM",
+            Id = userId
+        };
+        user2.PasswordHash = hasher.HashPassword(user2, "Password123!");
+
+        // add users for the data
+        modelBuilder.Entity<IdentityUser>().HasData(user1, user2);
+
+        // set the roles to the users
+        modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+            new IdentityUserRole<string> { UserId = adminId, RoleId = adminRoleId },
+            new IdentityUserRole<string> { UserId = userId, RoleId = userRoleId }
+        );
 
         OnModelCreatingPartial(modelBuilder);
     }

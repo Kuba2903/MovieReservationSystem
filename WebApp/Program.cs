@@ -1,9 +1,19 @@
+using Data;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+
+builder.Services.AddDbContext<MovieReservationSystemContext>();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<MovieReservationSystemContext>()
+    .AddDefaultTokenProviders();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
