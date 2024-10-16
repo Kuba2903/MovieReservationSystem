@@ -17,7 +17,7 @@ namespace Data
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-            optionsBuilder.UseSqlServer();
+            optionsBuilder.UseSqlServer("Data Source=HP;Initial Catalog=MovieReservationSystem;Integrated Security=True;Trust Server Certificate=True");
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
