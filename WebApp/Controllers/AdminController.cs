@@ -31,20 +31,20 @@ namespace WebApp.Controllers
 
         [HttpGet]
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(Movie entity)
         {
             var genres = await _management.GetAll<Genre>();
 
             ViewBag.Genres = new SelectList(genres,"Id","Name");
 
 
-            return View(new Movie());
+            return View(entity);
         }
 
 
         [HttpPost]
         
-        public async Task<IActionResult> Create(Movie entity)
+        public async Task<IActionResult> CreatePost(Movie entity)
         {
 
 
@@ -66,7 +66,8 @@ namespace WebApp.Controllers
             }
             else
             {
-                return BadRequest();
+                entity.IsValid = false;
+                return RedirectToAction("Create",entity);
             }
         }
 
