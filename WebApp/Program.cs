@@ -2,6 +2,8 @@ using Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
+using WebApp.Services.Implementations;
+using WebApp.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<MovieReservationSystemContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Server=HP;Database=MovieReservationSystem;Trusted_Connection=True;Trust Server Certificate=True")));
 
+builder.Services.AddScoped<IMovieManagement, MovieManagement>();
 //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MovieReservationSystemContext>();
 
 builder.Services.AddDefaultIdentity<IdentityUser>()
