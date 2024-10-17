@@ -42,10 +42,7 @@ namespace WebApp.Services.Implementations
         {
             var item = await _context.Set<T>().FindAsync(id);
 
-            if (item != null)
-                return item;
-            else
-                throw new Exception("obj not found");
+            return item;
         }
 
         public async Task Update<T>(T obj) where T : class

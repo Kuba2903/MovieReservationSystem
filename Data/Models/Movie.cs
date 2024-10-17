@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Data.Models;
 
@@ -11,9 +12,10 @@ public partial class Movie
 
     public string? Description { get; set; }
 
+    [Required]
     public int GenreId { get; set; }
 
-    public virtual Genre Genre { get; set; } = null!;
+    public virtual Genre? Genre { get; set; } = null;
 
     public virtual ICollection<ShowTime> ShowTimes { get; set; } = new List<ShowTime>();
 }

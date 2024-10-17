@@ -2,6 +2,8 @@
 using Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers
@@ -21,7 +23,7 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var entities = await _management.GetAll<Movie>();
+            var entities = await _context.Movies.Include(x => x.Genre).ToListAsync();
 
             return View(entities);
         }
@@ -29,8 +31,13 @@ namespace WebApp.Controllers
 
         [HttpGet]
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var genres = await _management.GetAll<Genre>();
+
+            ViewBag.Genres = new SelectList(genres,"Id","Name");
+
+
             return View(new Movie());
         }
 
@@ -39,6 +46,7 @@ namespace WebApp.Controllers
         
         public async Task<IActionResult> Create(Movie entity)
         {
+
 
             if (ModelState.IsValid)
             {
