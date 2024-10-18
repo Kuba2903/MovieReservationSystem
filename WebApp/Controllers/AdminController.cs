@@ -113,5 +113,24 @@ namespace WebApp.Controllers
 
         }
 
+
+        [HttpPost]
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var entity = await _management.GetById<Movie>(id);
+
+            if(entity != null)
+            {
+                _context.Movies.Remove(entity);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
     }
 }
