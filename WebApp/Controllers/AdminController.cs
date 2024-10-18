@@ -38,7 +38,7 @@ namespace WebApp.Controllers
             ViewBag.Genres = new SelectList(genres,"Id","Name");
 
 
-            return View(entity);
+            return View("CreateUpdate",entity);
         }
 
 
@@ -69,6 +69,48 @@ namespace WebApp.Controllers
                 entity.IsValid = false;
                 return RedirectToAction("Create",entity);
             }
+        }
+
+
+        [HttpGet]
+
+        public async Task<IActionResult> Update(int id)
+        {
+            var entity = await _management.GetById<Movie>(id);
+
+            if(entity != null)
+            {
+                var genres = await _management.GetAll<Genre>();
+
+                ViewBag.Genres = new SelectList(genres, "Id", "Name");
+
+                return View("CreateUpdate",entity);
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> UpdatePost(Movie entity)
+        {
+            if (ModelState.IsValid)
+            {
+                await _management.Update(entity);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                var genres = await _management.GetAll<Genre>();
+                ViewBag.Genres = new SelectList(genres, "Id", "Name");
+
+                entity.IsValid = false;
+                return View("CreateUpdate",entity);
+            }
+
         }
 
     }
