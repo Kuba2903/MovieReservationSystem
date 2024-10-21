@@ -58,6 +58,9 @@ public partial class MovieReservationSystemContext : IdentityDbContext<IdentityU
                 .IsUnicode(false)
                 .HasColumnName("description");
             entity.Property(e => e.GenreId).HasColumnName("genre_id");
+            entity.Property(e => e.ImgPath)
+                .HasMaxLength(255)
+                .HasColumnName("imgPath");
             entity.Property(e => e.Title)
                 .HasMaxLength(100)
                 .IsUnicode(false)

@@ -18,6 +18,7 @@ public partial class Movie
     [Required(ErrorMessage = "You must specify the genre!")]
     public int GenreId { get; set; }
 
+    public string? ImgPath { get; set; }
     public virtual Genre? Genre { get; set; } = null;
 
     public virtual ICollection<ShowTime> ShowTimes { get; set; } = new List<ShowTime>();
