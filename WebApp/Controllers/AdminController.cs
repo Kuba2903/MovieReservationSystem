@@ -61,8 +61,19 @@ namespace WebApp.Controllers
 
                 if (isExisting == null)
                 {
+
                     if (imgFile != null)
                     {
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var extension = Path.GetExtension(imgFile.FileName).ToLowerInvariant();
+
+                        if (!allowedExtensions.Contains(extension))
+                        {
+                            ModelState.AddModelError("ImgFile", "Invalid image format. Please upload a JPG, JPEG, PNG, or GIF file.");
+                            entity.IsValid = false;
+                            return RedirectToAction("Create", entity);
+                        }
+
                         var relativePath = await _management.SaveImageToFileSystem(imgFile);
                         entity.ImgPath = relativePath;
                     }
@@ -113,6 +124,16 @@ namespace WebApp.Controllers
             {
                 if (imgFile != null)
                 {
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var extension = Path.GetExtension(imgFile.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        ModelState.AddModelError("ImgFile", "Invalid image format. Please upload a JPG, JPEG, PNG, or GIF file.");
+                        entity.IsValid = false;
+                        return RedirectToAction("Update", entity.Id);
+                    }
+
                     var relativePath = await _management.SaveImageToFileSystem(imgFile);
                     entity.ImgPath = relativePath;
                 }

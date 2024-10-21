@@ -38,10 +38,10 @@
 
         <div class="form-group">
             <label asp-for="ImgPath" class="control-label">Upload image</label>
-            <input class="form-control" type="file" name="imgFile"/>
+            <input class="form-control" type="file" name="imgFile" accept=".jpg,.jpeg,.png,.gif" />
             @if (!Model.IsValid)
             {
-                <span asp-validation-for="ImgPath" class="text-danger"></span>
+                <span asp-validation-for="ImgPath" class="text-danger">Invalid image format. Please upload a JPG, JPEG, PNG, or GIF file.</span>
             }
         </div>
 
