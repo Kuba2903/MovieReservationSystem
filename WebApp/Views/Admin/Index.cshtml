@@ -2,27 +2,23 @@
 @model List<Movie>
 @{
 }
-
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Movies List</h1>
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Movies List</h1>
 
     @if (Model != null && Model.Any())
     {
-        <table border="1">
-            <thead>
+        <table class="table table-hover table-bordered">
+            <thead class="table-dark">
                 <tr>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Genre</th>
-                    <th>Show Times</th>
-                    <th>Tools</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">Show Times</th>
+                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,21 +31,25 @@
                         <td>
                             @if (movie.ShowTimes != null && movie.ShowTimes.Any())
                             {
-                                <ul>
+                                <ul class="list-unstyled mb-0">
                                     @foreach (var showTime in movie.ShowTimes)
                                     {
-                                        <li>@showTime.ShowDate</li>
+                                        <li><span class="badge bg-info">@showTime.ShowDate</span></li>
                                     }
                                 </ul>
                             }
                             else
                             {
-                                <p>No show times available</p>
+                                <span class="text-muted">No show times available</span>
                             }
                         </td>
                         <td>
-                            <a asp-action="Update" class="btn btn-primary" asp-route-id="@movie.Id">Update</a>
-                            <a href="#" class="btn btn-danger" onclick="confirmDelete(@movie.Id)">Delete</a>
+                            <a asp-action="Update" class="btn btn-sm btn-outline-primary" asp-route-id="@movie.Id">
+                                <i class="bi bi-pencil-square"></i> Update
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(@movie.Id)">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
                         </td>
                     </tr>
                 }
@@ -58,12 +58,13 @@
     }
     else
     {
-        <p>No movies available</p>
+        <div class="alert alert-info text-center">No movies available</div>
     }
 
-    <a asp-action="Create" class="btn btn-primary">Add movie</a>
-</body>
-</html>
+    <div class="text-end">
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add movie</a>
+    </div>
+</div>
 
 <script>
     function confirmDelete(movieId) {
