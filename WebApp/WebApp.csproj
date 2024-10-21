@@ -32,4 +32,9 @@
     <Folder Include="Areas\Identity\Data\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\Uploads\325b8a4c846ed7205e127647b0cb5bd8,0,0,0,0.jpg" />
+    <None Include="wwwroot\Uploads\images.jpg" />
+  </ItemGroup>
+
 </Project>

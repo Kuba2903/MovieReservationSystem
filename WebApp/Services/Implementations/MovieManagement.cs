@@ -53,12 +53,15 @@ namespace WebApp.Services.Implementations
 
         public async Task<string> SaveImageToFileSystem(IFormFile image)
         {
-            var filePath = Path.Combine("uploads", image.FileName);
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+            var filePath = Path.Combine("wwwroot/uploads", fileName);
+
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await image.CopyToAsync(stream);
             }
-            return filePath;
+
+            return $"uploads/{fileName}";
         }
     }
 }

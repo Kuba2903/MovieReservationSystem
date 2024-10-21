@@ -63,8 +63,8 @@ namespace WebApp.Controllers
                 {
                     if (imgFile != null)
                     {
-                        var file = await _management.SaveImageToFileSystem(imgFile);
-                        entity.ImgPath = file;
+                        var relativePath = await _management.SaveImageToFileSystem(imgFile);
+                        entity.ImgPath = relativePath;
                     }
 
                     await _management.Add(entity);
@@ -113,8 +113,8 @@ namespace WebApp.Controllers
             {
                 if (imgFile != null)
                 {
-                    var file = await _management.SaveImageToFileSystem(imgFile);
-                    entity.ImgPath = file;
+                    var relativePath = await _management.SaveImageToFileSystem(imgFile);
+                    entity.ImgPath = relativePath;
                 }
 
                 await _management.Update(entity);
