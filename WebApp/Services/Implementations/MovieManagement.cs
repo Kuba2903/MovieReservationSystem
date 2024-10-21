@@ -61,7 +61,7 @@ namespace WebApp.Services.Implementations
                 await image.CopyToAsync(stream);
             }
 
-            return $"uploads/{fileName}";
+            return $"/uploads/{fileName}";
         }
     }
 }
