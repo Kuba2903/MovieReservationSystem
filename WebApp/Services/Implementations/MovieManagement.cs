@@ -50,5 +50,18 @@ namespace WebApp.Services.Implementations
             _context.Set<T>().Update(obj);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<string> SaveImageToFileSystem(IFormFile image)
+        {
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+            var filePath = Path.Combine("wwwroot/uploads", fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            return $"uploads/{fileName}";
+        }
     }
 }

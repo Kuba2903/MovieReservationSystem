@@ -13,5 +13,7 @@ namespace WebApp.Services.Interfaces
         Task<T> GetById<T>(int id) where T : class;
 
         Task<List<T>> GetAll<T>() where T : class;
+
+        Task<string> SaveImageToFileSystem(IFormFile image);
     }
 }

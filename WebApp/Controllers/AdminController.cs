@@ -50,7 +50,7 @@ namespace WebApp.Controllers
 
         [HttpPost]
         
-        public async Task<IActionResult> CreatePost(Movie entity)
+        public async Task<IActionResult> CreatePost(Movie entity, IFormFile? imgFile)
         {
 
 
@@ -61,6 +61,12 @@ namespace WebApp.Controllers
 
                 if (isExisting == null)
                 {
+                    if (imgFile != null)
+                    {
+                        var relativePath = await _management.SaveImageToFileSystem(imgFile);
+                        entity.ImgPath = relativePath;
+                    }
+
                     await _management.Add(entity);
                     return RedirectToAction("Index");
                 }
@@ -101,10 +107,16 @@ namespace WebApp.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> UpdatePost(Movie entity)
+        public async Task<IActionResult> UpdatePost(Movie entity, IFormFile? imgFile)
         {
             if (ModelState.IsValid)
             {
+                if (imgFile != null)
+                {
+                    var relativePath = await _management.SaveImageToFileSystem(imgFile);
+                    entity.ImgPath = relativePath;
+                }
+
                 await _management.Update(entity);
                 return RedirectToAction("Index");
             }
