@@ -21,9 +21,15 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? genre)
         {
-            var entities = await _context.Movies.Include(x => x.Genre).ToListAsync();
+            var entities = _context.Movies.Include(x => x.Genre).AsQueryable();
+
+
+            if(genre.HasValue)
+                entities = entities.Where(x => x.GenreId == genre.Value);
+
+            ViewBag.Genres = await _context.Genres.ToListAsync();
 
             return View(entities);
         }
