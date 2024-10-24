@@ -61,8 +61,19 @@ namespace WebApp.Controllers
 
                 if (isExisting == null)
                 {
+
                     if (imgFile != null)
                     {
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var extension = Path.GetExtension(imgFile.FileName).ToLowerInvariant();
+
+                        if (!allowedExtensions.Contains(extension))
+                        {
+                            ModelState.AddModelError("ImgFile", "Invalid image format. Please upload a JPG, JPEG, PNG, or GIF file.");
+                            entity.IsValid = false;
+                            return RedirectToAction("Create", entity);
+                        }
+
                         var relativePath = await _management.SaveImageToFileSystem(imgFile);
                         entity.ImgPath = relativePath;
                     }
@@ -109,13 +120,27 @@ namespace WebApp.Controllers
 
         public async Task<IActionResult> UpdatePost(Movie entity, IFormFile? imgFile)
         {
-            if (ModelState.IsValid)
+
+            if (imgFile != null)
             {
-                if (imgFile != null)
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var extension = Path.GetExtension(imgFile.FileName).ToLowerInvariant();
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("ImgFile", "Invalid image format. Please upload a JPG, JPEG, PNG, or GIF file.");
+                    entity.IsValid = false;
+                }
+                else
                 {
                     var relativePath = await _management.SaveImageToFileSystem(imgFile);
                     entity.ImgPath = relativePath;
                 }
+            }
+
+
+            if (ModelState.IsValid)
+            {
 
                 await _management.Update(entity);
                 return RedirectToAction("Index");
