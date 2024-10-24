@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers
@@ -23,7 +24,8 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int? genre)
         {
-            var entities = _context.Movies.Include(x => x.Genre).AsQueryable();
+            var entities = _context.Movies.Include(x => x.Genre).Include(x => x.ShowTimes)
+                .AsQueryable();
 
 
             if(genre.HasValue)
@@ -185,6 +187,36 @@ namespace WebApp.Controllers
             ViewBag.Movies = new SelectList(movies, "Id","Title");
 
             return View(new ShowTime());
+        }
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> CreateShowTimes(ShowTime entity)
+        {
+            var allEntities = await _management.GetAll<ShowTime>();
+
+            DateTime combined = entity.Date.Date + entity.Time;
+            TimeSpan span = new TimeSpan(2, 30, 0);
+
+            entity.ShowDate = combined;
+
+            if(!allEntities.Any(x => x.ShowDate.Value.Date == entity.ShowDate.Value.Date
+            && x.ShowDate.Value.TimeOfDay < entity.ShowDate.Value.TimeOfDay.Add(span)
+            && x.ShowDate.Value.TimeOfDay > entity.ShowDate.Value.TimeOfDay.Subtract(span)))
+            {
+                await _management.Add(entity);
+            }
+            else
+            {
+                ModelState.AddModelError("Time", "Hours conflict! You need to have at least 2:30h time span between the show times");
+                var movies = await _management.GetAll<Movie>();
+
+                ViewBag.Movies = new SelectList(movies, "Id", "Title");
+                return View();
+            }
+
+            return RedirectToAction("Index");
         }
 
     }

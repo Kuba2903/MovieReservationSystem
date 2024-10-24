@@ -18,8 +18,8 @@ public partial class ShowTime
 
 
     [NotMapped]
-    public DateTime? Date { get; set; }
+    public DateTime Date { get; set; }
 
     [NotMapped]
-    public TimeSpan? Time { get; set; }
+    public TimeSpan Time { get; set; }
 }
