@@ -175,5 +175,17 @@ namespace WebApp.Controllers
             }
         }
 
+
+        [HttpGet]
+
+        public async Task<IActionResult> CreateShowTimes()
+        {
+            var movies = await _management.GetAll<Movie>();
+
+            ViewBag.Movies = new SelectList(movies, "Id","Title");
+
+            return View(new ShowTime());
+        }
+
     }
 }

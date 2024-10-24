@@ -1,0 +1,37 @@
+﻿@using Data.Models
+@model ShowTime
+@{
+}
+
+
+<h1>Create Show Time</h1>
+
+<div>
+
+    <form asp-action="CreateShowTimes" method="post">
+
+        <div class="form-group">
+            <label asp-for="Movie" class="control-label"></label>
+            <select asp-for="MovieId" class="form-control" asp-items="ViewBag.Movies"></select>
+            <span asp-validation-for="MovieId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Date" class="control-label"></label>
+            <input type="date" asp-for="Date" class="form-control"/>
+            <span asp-validation-for="Date" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Time" class="control-label"></label>
+            <input type="time" asp-for="Time" class="form-control"/>
+            <span asp-validation-for="Time" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </form>
+
+</div>

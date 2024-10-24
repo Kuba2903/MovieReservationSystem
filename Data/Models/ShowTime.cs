@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Models;
 
@@ -14,4 +15,11 @@ public partial class ShowTime
     public virtual Movie Movie { get; set; } = null!;
 
     public virtual ICollection<SeatReservation> SeatReservations { get; set; } = new List<SeatReservation>();
+
+
+    [NotMapped]
+    public DateTime? Date { get; set; }
+
+    [NotMapped]
+    public TimeSpan? Time { get; set; }
 }
