@@ -186,7 +186,10 @@ namespace WebApp.Controllers
 
             ViewBag.Movies = new SelectList(movies, "Id","Title");
 
-            return View(new ShowTime());
+            return View(new ShowTime() { Date = 
+                new DateTime(DateTime.Today.Year,DateTime.Today.Month,DateTime.Today.Day+1),
+                Time = new TimeSpan(15,0,0) //default value for date and time
+                });
         }
 
 
@@ -217,6 +220,24 @@ namespace WebApp.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> DeleteShowTime(int id)
+        {
+            var entity = await _management.GetById<ShowTime>(id);
+
+            if(entity != null)
+            {
+                await _management.Delete<ShowTime>(entity.Id);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
     }
