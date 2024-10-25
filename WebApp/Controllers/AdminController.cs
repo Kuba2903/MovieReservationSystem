@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers
@@ -23,7 +24,8 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int? genre)
         {
-            var entities = _context.Movies.Include(x => x.Genre).AsQueryable();
+            var entities = _context.Movies.Include(x => x.Genre).Include(x => x.ShowTimes)
+                .AsQueryable();
 
 
             if(genre.HasValue)
@@ -167,6 +169,69 @@ namespace WebApp.Controllers
             {
                 _context.Movies.Remove(entity);
                 await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
+        [HttpGet]
+
+        public async Task<IActionResult> CreateShowTimes()
+        {
+            var movies = await _management.GetAll<Movie>();
+
+            ViewBag.Movies = new SelectList(movies, "Id","Title");
+
+            return View(new ShowTime() { Date = 
+                new DateTime(DateTime.Today.Year,DateTime.Today.Month,DateTime.Today.Day+1),
+                Time = new TimeSpan(15,0,0) //default value for date and time
+                });
+        }
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> CreateShowTimes(ShowTime entity)
+        {
+            var allEntities = await _management.GetAll<ShowTime>();
+
+            DateTime combined = entity.Date.Date + entity.Time;
+            TimeSpan span = new TimeSpan(2, 30, 0);
+
+            entity.ShowDate = combined;
+
+            if(!allEntities.Any(x => x.ShowDate.Value.Date == entity.ShowDate.Value.Date
+            && x.ShowDate.Value.TimeOfDay < entity.ShowDate.Value.TimeOfDay.Add(span)
+            && x.ShowDate.Value.TimeOfDay > entity.ShowDate.Value.TimeOfDay.Subtract(span)))
+            {
+                await _management.Add(entity);
+            }
+            else
+            {
+                ModelState.AddModelError("Time", "Hours conflict! You need to have at least 2:30h time span between the show times");
+                var movies = await _management.GetAll<Movie>();
+
+                ViewBag.Movies = new SelectList(movies, "Id", "Title");
+                return View();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> DeleteShowTime(int id)
+        {
+            var entity = await _management.GetById<ShowTime>(id);
+
+            if(entity != null)
+            {
+                await _management.Delete<ShowTime>(entity.Id);
                 return RedirectToAction("Index");
             }
             else
