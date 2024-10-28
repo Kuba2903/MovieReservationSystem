@@ -39,12 +39,15 @@ namespace WebApp.Controllers
 
         [HttpGet]
 
-        public async Task<IActionResult> Create(Movie entity)
+        public async Task<IActionResult> Create(Movie entity, bool isFirstLoad = true)
         {
             var genres = await _management.GetAll<Genre>();
 
             ViewBag.Genres = new SelectList(genres,"Id","Name");
 
+            if(!ModelState.IsValid && isFirstLoad)
+                ModelState.Clear();
+            
 
             return View("CreateUpdate",entity);
         }
@@ -54,7 +57,6 @@ namespace WebApp.Controllers
         
         public async Task<IActionResult> CreatePost(Movie entity, IFormFile? imgFile)
         {
-
 
             if (ModelState.IsValid)
             {
@@ -72,7 +74,6 @@ namespace WebApp.Controllers
                         if (!allowedExtensions.Contains(extension))
                         {
                             ModelState.AddModelError("ImgFile", "Invalid image format. Please upload a JPG, JPEG, PNG, or GIF file.");
-                            entity.IsValid = false;
                             return RedirectToAction("Create", entity);
                         }
 
@@ -91,8 +92,7 @@ namespace WebApp.Controllers
             }
             else
             {
-                entity.IsValid = false;
-                return RedirectToAction("Create",entity);
+                return RedirectToAction("Create", new {entity = entity, isFirstLoad = false });
             }
         }
 
@@ -131,7 +131,7 @@ namespace WebApp.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("ImgFile", "Invalid image format. Please upload a JPG, JPEG, PNG, or GIF file.");
-                    entity.IsValid = false;
+                    //entity.IsValid = false;
                 }
                 else
                 {
@@ -152,7 +152,7 @@ namespace WebApp.Controllers
                 var genres = await _management.GetAll<Genre>();
                 ViewBag.Genres = new SelectList(genres, "Id", "Name");
 
-                entity.IsValid = false;
+                //entity.IsValid = false;
                 return View("CreateUpdate",entity);
             }
 

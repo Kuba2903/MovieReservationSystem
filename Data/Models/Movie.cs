@@ -22,6 +22,4 @@ public partial class Movie
 
     public virtual ICollection<ShowTime> ShowTimes { get; set; } = new List<ShowTime>();
 
-    [NotMapped]
-    public bool IsValid { get; set; } = true;
 }
