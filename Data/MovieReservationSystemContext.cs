@@ -7,7 +7,7 @@ using Data.Models;
 
 namespace Data;
 
-public partial class MovieReservationSystemContext : IdentityDbContext<IdentityUser>
+public partial class MovieReservationSystemContext : IdentityDbContext<ApplicationUser>
 {
     public MovieReservationSystemContext()
     {
@@ -92,6 +92,11 @@ public partial class MovieReservationSystemContext : IdentityDbContext<IdentityU
                 .HasForeignKey(d => d.ShowTimeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__SeatReser__showT__38996AB5");
+
+
+            entity.HasOne(d => d.User).WithMany(p => p.SeatReservations)
+                .HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__SeatReserv_User");
         });
 
         modelBuilder.Entity<ShowTime>(entity =>
