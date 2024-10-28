@@ -131,7 +131,6 @@ namespace WebApp.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("ImgFile", "Invalid image format. Please upload a JPG, JPEG, PNG, or GIF file.");
-                    //entity.IsValid = false;
                 }
                 else
                 {
@@ -152,7 +151,6 @@ namespace WebApp.Controllers
                 var genres = await _management.GetAll<Genre>();
                 ViewBag.Genres = new SelectList(genres, "Id", "Name");
 
-                //entity.IsValid = false;
                 return View("CreateUpdate",entity);
             }
 
@@ -167,8 +165,7 @@ namespace WebApp.Controllers
 
             if(entity != null)
             {
-                _context.Movies.Remove(entity);
-                await _context.SaveChangesAsync();
+                await _management.Delete<Movie>(entity.Id);
                 return RedirectToAction("Index");
             }
             else
