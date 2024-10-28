@@ -1,0 +1,27 @@
+﻿@using Data.Models
+@model IQueryable<ShowTime>
+@{
+}
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container mt-4">
+    <div class="row">
+        @foreach (var showTime in Model)
+        {
+            var movie = showTime.Movie;
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <h5 class="card-title text-center">@movie.Title</h5>
+                    <img src="@movie.ImgPath" class="card-img-top" alt="@movie.Title poster" />
+                    <div class="card-body">
+                        <p class="card-text"><strong>Genre: </strong> @movie.Genre.Name</p>
+                        <p class="card-text"><strong>Description: </strong>@movie.Description</p>
+                        <p class="card-text"><strong>Show Date: </strong>@showTime.ShowDate.Value.ToString("yyyy-MM-dd HH:mm")</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
