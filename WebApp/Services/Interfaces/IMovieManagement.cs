@@ -15,5 +15,7 @@ namespace WebApp.Services.Interfaces
         Task<List<T>> GetAll<T>() where T : class;
 
         Task<string> SaveImageToFileSystem(IFormFile image);
+
+        Task FillSeats_Sectors(int showTimeId);
     }
 }

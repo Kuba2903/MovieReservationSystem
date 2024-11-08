@@ -206,6 +206,7 @@ namespace WebApp.Controllers
             && x.ShowDate.Value.TimeOfDay > entity.ShowDate.Value.TimeOfDay.Subtract(span)))
             {
                 await _management.Add(entity);
+                await _management.FillSeats_Sectors(entity.Id);
             }
             else
             {
