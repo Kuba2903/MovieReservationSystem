@@ -51,7 +51,7 @@
                         <p class="card-text"><strong>Description: </strong>@movie.Description</p>
                         <p class="card-text"><strong>Show Date: </strong>@showTime.ShowDate.Value.ToString("yyyy-MM-dd HH:mm")</p>
                     </div>
-                    <a asp-action="AddReservation" class="btn btn-primary"><i class="bi bi-plus-circle"></i>Reserve seat</a>
+                    <a asp-action="AddReservation" asp-route-showTimeId="@showTime.Id" asp-route-userId="@ViewBag.UserId" class="btn btn-primary"><i class="bi bi-plus-circle"></i>Reserve seat</a>
                 </div>
             </div>
         }

@@ -142,11 +142,11 @@ public partial class MovieReservationSystemContext : IdentityDbContext<Applicati
         );
 
         // creating users
-        var hasher = new PasswordHasher<IdentityUser>();
+        var hasher = new PasswordHasher<ApplicationUser>();
 
 
         var adminId = Guid.NewGuid().ToString();
-        var user1 = new IdentityUser
+        var user1 = new ApplicationUser
         {
             UserName = "admin@example.com",
             Email = "admin@example.com",
@@ -159,7 +159,7 @@ public partial class MovieReservationSystemContext : IdentityDbContext<Applicati
 
 
         var userId = Guid.NewGuid().ToString();
-        var user2 = new IdentityUser
+        var user2 = new ApplicationUser
         {
             UserName = "user@example.com",
             Email = "user@example.com",
@@ -171,7 +171,7 @@ public partial class MovieReservationSystemContext : IdentityDbContext<Applicati
         user2.PasswordHash = hasher.HashPassword(user2, "Password123!");
 
         // add users for the data
-        modelBuilder.Entity<IdentityUser>().HasData(user1, user2);
+        modelBuilder.Entity<ApplicationUser>().HasData(user1, user2);
 
         // set the roles to the users
         modelBuilder.Entity<IdentityUserRole<string>>().HasData(

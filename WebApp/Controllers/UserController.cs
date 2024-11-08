@@ -1,21 +1,35 @@
 ﻿using Data;
 using Data.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers
 {
+    //[Authorize(Roles = "User")]
     public class UserController : Controller
     {
         private readonly MovieReservationSystemContext _context;
 
         private readonly IMovieManagement _management;
 
-        public UserController(MovieReservationSystemContext context, IMovieManagement management)
+        private UserManager<ApplicationUser> _userManager;
+
+        public UserController(MovieReservationSystemContext context, IMovieManagement management,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _management = management;
+            _userManager = userManager;
+        }
+
+        public async Task<string> GetUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            return user.Id;
         }
 
         [HttpGet]
@@ -36,9 +50,27 @@ namespace WebApp.Controllers
                 films = films.Where(x => x.ShowDate <= dateTo);
 
             ViewBag.Genres = await _management.GetAll<Genre>();
-
+            ViewBag.UserId = await GetUser();
 
             return View(films);
+        }
+
+
+        [HttpGet]
+
+        public async Task<IActionResult> AddReservation(int showTimeId, string userId)
+        {
+            var sectors = await _context.SeatReservations.Where(x => x.ShowTimeId == showTimeId)
+                .Select(x => x.Sector).ToListAsync();
+
+            var seats = await _context.SeatReservations.Where(x => x.ShowTimeId == showTimeId)
+                .Select(x => x.Seat).ToListAsync();
+
+            ViewBag.Sectors = sectors;
+            ViewBag.Seats = seats;
+            
+
+            return View();
         }
     }
 }
