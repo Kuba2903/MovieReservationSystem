@@ -1,0 +1,34 @@
+﻿@using Data.Models
+@model List<ShowTime>
+@{
+}
+
+<h1>Your reservations for show times</h1>
+<h3>You can cancel your reservation at least one hour before the start of the movie</h3>
+
+<div>
+    <div class="row">
+        @foreach (var showTime in Model)
+        {
+            
+           var showTimeReservations = ((IEnumerable<SeatReservation>)ViewBag.reservations)
+            .FirstOrDefault(r => r.ShowTimeId == showTime.Id && r.UserId == ViewBag.UserId);
+            
+
+            var movie = showTime.Movie;
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <h5 class="card-title text-center">@movie.Title</h5>
+                    <img src="@movie.ImgPath" class="card-img-top" alt="@movie.Title poster" />
+                    <div class="card-body">
+                        <p class="card-text"><strong>Show Date: </strong>@showTime.ShowDate.Value.ToString("yyyy-MM-dd HH:mm")</p>
+                        <p class="card-text"><strong>Sector: </strong>@showTimeReservations.Sector</p>
+                        <p class="card-text"><strong>Seat: </strong>@showTimeReservations.Seat</p>
+                    </div>
+                    <a asp-action="CancelReservation" asp-route-showTimeId="@showTime.Id" asp-route-userId="@ViewBag.UserId" class="btn btn-primary" style="background-color:red"><i class="bi bi-plus-circle"></i>Cancel reservation</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -132,16 +132,21 @@ namespace WebApp.Controllers
         {
             string userId = await GetUser();
 
-            var user_reservations = await _context.Users.Include(x => x.SeatReservations).
+            ViewBag.UserId = userId;
+
+            var user = await _context.Users.Include(x => x.SeatReservations).
                 FirstOrDefaultAsync(x => x.Id == userId);
 
-            var showTimesId = user_reservations.SeatReservations.Select(x => x.ShowTimeId).ToList();
+            var showTimesId = user.SeatReservations.Select(x => x.ShowTimeId).ToList();
 
-            var reservations = await _context.SeatReservations.Where
-                (x => showTimesId.Contains(x.ShowTimeId)).ToListAsync();
 
             var films = await _context.ShowTimes.Include(x => x.Movie).ThenInclude(x => x.Genre)
-                .Where(x => showTimesId.Contains(x.Id)).ToListAsync();
+                .Where(x => showTimesId.Contains(x.Id) && x.ShowDate >= DateTime.Now).ToListAsync();
+
+            var reservations = await _context.SeatReservations.Where(x => showTimesId.Contains(x.ShowTimeId))
+                .ToListAsync();
+
+            ViewBag.reservations = reservations;
 
             return View(films);
         }
