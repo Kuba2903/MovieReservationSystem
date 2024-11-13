@@ -62,7 +62,7 @@ namespace WebApp.Controllers
 
         [HttpGet]
 
-        public async Task<IActionResult> AddReservation(int showTimeId)
+        public async Task<IActionResult> AddReservation(int showTimeId, string? errorMessage)
         {
             var sectors = await _context.SeatReservations.Where(x => x.ShowTimeId == showTimeId)
                 .Select(x => x.Sector).Distinct().ToListAsync();
@@ -75,6 +75,14 @@ namespace WebApp.Controllers
                 .GroupBy(x => x.Sector)
                 .ToDictionaryAsync(g => g.Key, g => g.Select(seat => seat.Seat).ToList());
 
+            var film = await _context.SeatReservations.Include(x => x.ShowTime).ThenInclude(x => x.Movie)
+                .Where(x => x.ShowTimeId == showTimeId).Select(x => x.ShowTime.Movie).FirstOrDefaultAsync();
+            
+            if(!string.IsNullOrEmpty(errorMessage))
+                ViewBag.ErrorMessage = errorMessage;
+
+            ViewBag.Film = film.Title;
+            ViewBag.seatsLeft = (sectors.Count * seats.Count) - occupiedSeats.Count;
             ViewBag.Sectors = sectors;
             ViewBag.Seats = seats;
             ViewBag.Occup = occupiedSeats;
@@ -92,9 +100,24 @@ namespace WebApp.Controllers
             if (existingReservation != null)
             {
                 string? id = await GetUser();
-                existingReservation.UserId = id;
 
-                await _context.SaveChangesAsync();
+                /// Validates if the user previously booked the seat for this movie
+
+                var isContainingUser = await _context.SeatReservations.FirstOrDefaultAsync(x => x.ShowTimeId == entity.ShowTimeId
+                && x.UserId == id);
+
+                if (isContainingUser == null)
+                {
+                    existingReservation.UserId = id;
+
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    return RedirectToAction("AddReservation", new { showTimeId  = entity.ShowTimeId, 
+                        errorMessage = "This user already booked his seat for this movie!"
+                    });
+                }
             }
 
             return RedirectToAction("Index");
