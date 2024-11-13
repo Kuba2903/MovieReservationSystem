@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers
@@ -121,6 +123,27 @@ namespace WebApp.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+
+        [HttpGet]
+
+        public async Task<IActionResult> CheckReservations()
+        {
+            string userId = await GetUser();
+
+            var user_reservations = await _context.Users.Include(x => x.SeatReservations).
+                FirstOrDefaultAsync(x => x.Id == userId);
+
+            var showTimesId = user_reservations.SeatReservations.Select(x => x.ShowTimeId).ToList();
+
+            var reservations = await _context.SeatReservations.Where
+                (x => showTimesId.Contains(x.ShowTimeId)).ToListAsync();
+
+            var films = await _context.ShowTimes.Include(x => x.Movie).ThenInclude(x => x.Genre)
+                .Where(x => showTimesId.Contains(x.Id)).ToListAsync();
+
+            return View(films);
         }
     }
 }
