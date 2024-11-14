@@ -1,4 +1,5 @@
 ﻿using Data;
+using Data.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -62,6 +63,31 @@ namespace WebApp.Services.Implementations
             }
 
             return $"/uploads/{fileName}";
+        }
+
+        public async Task FillSeats_Sectors(int showTimeId)
+        {
+            string[] sectors = { "A","B","C","D","E","F","G","H" };
+
+            string[] seats = { "0", "1", "2", "3", "4", "5", "6", "7","8","9" };
+
+
+            for (int i = 0; i < sectors.Length; i++)
+            {
+                for (int j = 0; j < seats.Length; j++)
+                {
+                    SeatReservation entity = new SeatReservation()
+                    {
+                        ShowTimeId = showTimeId,
+                        Sector = sectors[i],
+                        Seat = seats[j]
+                    };
+
+                    await _context.AddAsync(entity);
+                }
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

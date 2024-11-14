@@ -1,0 +1,59 @@
+﻿@using Data.Models
+@model IQueryable<ShowTime>
+@{
+}
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container mt-4">
+
+    <form method="get" asp-action="Index" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label for="genreFilter" class="form-label">Filter by Genre</label>
+            <select class="form-select" id="genreFilter" name="genre">
+                <option value="">All genres</option>
+                @foreach (var genre in ViewBag.Genres)
+                {
+                    <option value="@genre.Id">
+                        @genre.Name
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="dateFrom" class="form-label">From Date</label>
+            <input name="dateFrom" class="form-control" type="date" />
+        </div>
+
+        <div class="col-md-4">
+            <label for="dateTo" class="form-label">To Date</label>
+            <input name="dateTo" class="form-control" type="date" />
+        </div>
+
+        <div class="col-md-12 text-end">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a href="@Url.Action("Index", new { genre = ""})" class="btn btn-secondary">Clear Filters</a>
+        </div>
+    </form>
+
+    <div class="row">
+        @foreach (var showTime in Model)
+        {
+            var movie = showTime.Movie;
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <h5 class="card-title text-center">@movie.Title</h5>
+                    <img src="@movie.ImgPath" class="card-img-top" alt="@movie.Title poster" />
+                    <div class="card-body">
+                        <p class="card-text"><strong>Genre: </strong> @movie.Genre.Name</p>
+                        <p class="card-text"><strong>Description: </strong>@movie.Description</p>
+                        <p class="card-text"><strong>Show Date: </strong>@showTime.ShowDate.Value.ToString("yyyy-MM-dd HH:mm")</p>
+                    </div>
+                    <a asp-action="AddReservation" asp-route-showTimeId="@showTime.Id" asp-route-userId="@ViewBag.UserId" class="btn btn-primary"><i class="bi bi-plus-circle"></i>Reserve seat</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,47 @@
+﻿@using Data.Models
+@model SeatReservation
+@{
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Are you sure you want to cancel your reservation?</h1>
+    <h3 class="text-center text-muted mb-4">If so, we will refund your money to your bank account</h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="CancelReservation" method="post">
+                <input type="hidden" asp-for="@Model.ShowTimeId" />
+                <input type="hidden" asp-for="@Model.UserId" />
+                <input type="hidden" asp-for="@Model.Sector" />
+                <input type="hidden" asp-for="@Model.Seat" />
+
+                <div class="form-group mb-3">
+                    <label class="form-label"><strong>Reservation Info</strong></label>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label"><strong>Movie:</strong> @ViewBag.film</label>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label"><strong>Show Date:</strong> @ViewBag.showTimeDate</label>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label"><strong>Sector:</strong> @Model.Sector</label>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label"><strong>Seat:</strong> @Model.Seat</label>
+                </div>
+
+                <span class="text-danger d-block mb-3">@ViewBag.errorMessage</span>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-danger">Cancel Reservation</button>
+                    <a class="btn btn-secondary" asp-action="CheckReservations">Go Back to Your Reservations</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

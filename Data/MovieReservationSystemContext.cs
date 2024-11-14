@@ -7,7 +7,7 @@ using Data.Models;
 
 namespace Data;
 
-public partial class MovieReservationSystemContext : IdentityDbContext<IdentityUser>
+public partial class MovieReservationSystemContext : IdentityDbContext<ApplicationUser>
 {
     public MovieReservationSystemContext()
     {
@@ -92,6 +92,11 @@ public partial class MovieReservationSystemContext : IdentityDbContext<IdentityU
                 .HasForeignKey(d => d.ShowTimeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__SeatReser__showT__38996AB5");
+
+
+            entity.HasOne(d => d.User).WithMany(p => p.SeatReservations)
+                .HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__SeatReserv_User");
         });
 
         modelBuilder.Entity<ShowTime>(entity =>
@@ -137,11 +142,11 @@ public partial class MovieReservationSystemContext : IdentityDbContext<IdentityU
         );
 
         // creating users
-        var hasher = new PasswordHasher<IdentityUser>();
+        var hasher = new PasswordHasher<ApplicationUser>();
 
 
         var adminId = Guid.NewGuid().ToString();
-        var user1 = new IdentityUser
+        var user1 = new ApplicationUser
         {
             UserName = "admin@example.com",
             Email = "admin@example.com",
@@ -154,7 +159,7 @@ public partial class MovieReservationSystemContext : IdentityDbContext<IdentityU
 
 
         var userId = Guid.NewGuid().ToString();
-        var user2 = new IdentityUser
+        var user2 = new ApplicationUser
         {
             UserName = "user@example.com",
             Email = "user@example.com",
@@ -166,7 +171,7 @@ public partial class MovieReservationSystemContext : IdentityDbContext<IdentityU
         user2.PasswordHash = hasher.HashPassword(user2, "Password123!");
 
         // add users for the data
-        modelBuilder.Entity<IdentityUser>().HasData(user1, user2);
+        modelBuilder.Entity<ApplicationUser>().HasData(user1, user2);
 
         // set the roles to the users
         modelBuilder.Entity<IdentityUserRole<string>>().HasData(
