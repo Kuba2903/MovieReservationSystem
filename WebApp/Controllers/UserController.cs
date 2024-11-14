@@ -155,8 +155,12 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> CancelReservation(int showTimeId, string userId, string? errorMessage)
         {
-            var findReservation = await _context.SeatReservations.FirstOrDefaultAsync
-                (x => x.ShowTimeId == showTimeId && x.UserId == userId);
+            var findReservation = await _context.SeatReservations.Include(x => x.ShowTime).
+                ThenInclude(x => x.Movie).
+                FirstOrDefaultAsync(x => x.ShowTimeId == showTimeId && x.UserId == userId);
+
+            ViewBag.film = findReservation.ShowTime.Movie.Title;
+            ViewBag.showTimeDate = findReservation.ShowTime.ShowDate.Value.ToString("yyyy-MM-dd HH:mm");
 
             if(!string.IsNullOrEmpty(errorMessage))
                 ViewBag.errorMessage = errorMessage;
@@ -170,25 +174,28 @@ namespace WebApp.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> CancelReservation(SeatReservation reservation)
+        public async Task<IActionResult> CancelReservation(SeatReservation findReservation)
         {
+            TimeSpan hour = new TimeSpan(36000000000);
+            var hourFromNow = DateTime.Now.TimeOfDay.Add(hour);
+            
             var showDate = await _context.ShowTimes.FirstOrDefaultAsync(x =>
-                 x.SeatReservations.Contains(reservation) && x.ShowDate.HasValue &&
-                 (x.ShowDate.Value - DateTime.Today).TotalHours >= 1);
+                 x.SeatReservations.Contains(findReservation) && x.ShowDate.HasValue &&
+                 x.ShowDate.Value.Hour > hourFromNow.TotalHours);
 
             if (showDate != null)
             {
-                _context.SeatReservations.Remove(reservation);
+                _context.SeatReservations.Remove(findReservation);
                 await _context.SaveChangesAsync();
             }
             else
             {
                 return RedirectToAction("CancelReservation", new
                 {
-                    showTimeId = reservation.ShowTimeId,
-                    userId = reservation.UserId,
+                    showTimeId = findReservation.ShowTimeId,
+                    userId = findReservation.UserId,
                     errorMessage = "You are able to cancel at least one hour" +
-                    "before the start of the movie"
+                    " before the start of the movie"
                 });
             }
 
