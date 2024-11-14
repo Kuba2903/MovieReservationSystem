@@ -26,7 +26,9 @@
                         <p class="card-text"><strong>Sector: </strong>@showTimeReservations.Sector</p>
                         <p class="card-text"><strong>Seat: </strong>@showTimeReservations.Seat</p>
                     </div>
-                    <a asp-action="CancelReservation" asp-route-showTimeId="@showTime.Id" asp-route-userId="@ViewBag.UserId" class="btn btn-primary" style="background-color:red"><i class="bi bi-plus-circle"></i>Cancel reservation</a>
+                    <a asp-action="CancelReservation" asp-route-showTimeId="@showTime.Id" 
+                    asp-route-userId="@ViewBag.UserId" class="btn btn-primary" 
+                    style="background-color:red"><i class="bi bi-plus-circle"></i>Cancel reservation</a>
                 </div>
             </div>
         }

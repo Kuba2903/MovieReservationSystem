@@ -150,5 +150,42 @@ namespace WebApp.Controllers
 
             return View(films);
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> CancelReservation(int showTimeId, string userId, string? errorMessage)
+        {
+
+
+            return View();
+        }
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> CancelReservation(int showTimeId, string userId)
+        {
+            var findReservation = await _context.SeatReservations.FirstOrDefaultAsync
+                (x => x.ShowTimeId == showTimeId && x.UserId == userId);
+
+            if(findReservation != null)
+            {
+                var showDate = await _context.ShowTimes.FirstOrDefaultAsync(x =>
+                x.SeatReservations.Contains(findReservation) && x.ShowDate.HasValue && 
+                (x.ShowDate.Value - DateTime.Today).TotalHours >= 1);
+
+                if (showDate != null)
+                {
+                    _context.SeatReservations.Remove(findReservation);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("CheckReservations");
+        }
     }
 }
