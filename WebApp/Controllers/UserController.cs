@@ -155,34 +155,41 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> CancelReservation(int showTimeId, string userId, string? errorMessage)
         {
+            var findReservation = await _context.SeatReservations.FirstOrDefaultAsync
+                (x => x.ShowTimeId == showTimeId && x.UserId == userId);
 
+            if(!string.IsNullOrEmpty(errorMessage))
+                ViewBag.errorMessage = errorMessage;
 
-            return View();
+            if (findReservation != null)
+                return View(findReservation);
+            else
+                return NotFound();
         }
 
 
         [HttpPost]
 
-        public async Task<IActionResult> CancelReservation(int showTimeId, string userId)
+        public async Task<IActionResult> CancelReservation(SeatReservation reservation)
         {
-            var findReservation = await _context.SeatReservations.FirstOrDefaultAsync
-                (x => x.ShowTimeId == showTimeId && x.UserId == userId);
+            var showDate = await _context.ShowTimes.FirstOrDefaultAsync(x =>
+                 x.SeatReservations.Contains(reservation) && x.ShowDate.HasValue &&
+                 (x.ShowDate.Value - DateTime.Today).TotalHours >= 1);
 
-            if(findReservation != null)
+            if (showDate != null)
             {
-                var showDate = await _context.ShowTimes.FirstOrDefaultAsync(x =>
-                x.SeatReservations.Contains(findReservation) && x.ShowDate.HasValue && 
-                (x.ShowDate.Value - DateTime.Today).TotalHours >= 1);
-
-                if (showDate != null)
-                {
-                    _context.SeatReservations.Remove(findReservation);
-                    await _context.SaveChangesAsync();
-                }
+                _context.SeatReservations.Remove(reservation);
+                await _context.SaveChangesAsync();
             }
             else
             {
-                return NotFound();
+                return RedirectToAction("CancelReservation", new
+                {
+                    showTimeId = reservation.ShowTimeId,
+                    userId = reservation.UserId,
+                    errorMessage = "You are able to cancel at least one hour" +
+                    "before the start of the movie"
+                });
             }
 
             return RedirectToAction("CheckReservations");
