@@ -9,7 +9,7 @@
     <p class="lead text-light">Discover the magic of movies! Check out the latest showings and book your seat today.</p>
 </div>
 
-<!-- Nadchodzące filmy -->
+
 <h2 class="text-center mt-5 text-light">Upcoming Movies</h2>
 
 @if (Model.Any())
@@ -40,41 +40,3 @@ else
 {
     <p class="text-center mt-3 text-light">No movies scheduled for the next two weeks.</p>
 }
-
-<style>
-    /* Styl powitalny */
-    .welcome-section {
-        background: linear-gradient(135deg, #6a11cb, #2575fc); /* Gradient fioletowy */
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-        .welcome-section h1, .welcome-section p {
-            margin: 0;
-        }
-
-    /* Tabela filmów */
-    .movie-table {
-        background-color: #1c1c1e;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-        .movie-table thead {
-            background-color: #333;
-            color: #f8f9fa; /* Jasny tekst w nagłówku */
-        }
-
-        .movie-table tbody tr {
-            color: #eaeaea; /* Jasny tekst w wierszach */
-        }
-
-            .movie-table tbody tr:hover {
-                background-color: #4a69bd; /* Podświetlenie na jaśniejszy kolor */
-            }
-
-    /* Dodatkowe style dla nagłówków i tekstów */
-    .text-light {
-        color: #f8f9fa !important;
-    }
-</style>
