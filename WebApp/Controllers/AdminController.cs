@@ -9,7 +9,7 @@ using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
 

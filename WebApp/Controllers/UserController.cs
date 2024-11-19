@@ -11,7 +11,7 @@ using WebApp.Services.Interfaces;
 
 namespace WebApp.Controllers
 {
-    //[Authorize(Roles = "User")]
+    [Authorize(Roles = "User")]
     public class UserController : Controller
     {
         private readonly MovieReservationSystemContext _context;
@@ -39,6 +39,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index(int? genre, DateTime? dateFrom, DateTime? dateTo)
         {
 
