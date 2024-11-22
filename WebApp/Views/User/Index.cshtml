@@ -1,5 +1,5 @@
 ﻿@using Data.Models
-@model IQueryable<ShowTime>
+@model Dictionary<Movie,List<DateTime?>>
 @{
 }
 
@@ -38,20 +38,25 @@
     </form>
 
     <div class="row">
-        @foreach (var showTime in Model)
+        @foreach (var movie in Model)
         {
-            var movie = showTime.Movie;
+            //var movie = showTime.Movie;
 
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <h5 class="card-title text-center">@movie.Title</h5>
-                    <img src="@movie.ImgPath" class="card-img-top" alt="@movie.Title poster" />
+                    <h5 class="card-title text-center">@movie.Key.Title</h5>
+                    <img src="@movie.Key.ImgPath" class="card-img-top" alt="@movie.Key.Title poster" />
                     <div class="card-body">
-                        <p class="card-text"><strong>Genre: </strong> @movie.Genre.Name</p>
-                        <p class="card-text"><strong>Description: </strong>@movie.Description</p>
-                        <p class="card-text"><strong>Show Date: </strong>@showTime.ShowDate.Value.ToString("yyyy-MM-dd HH:mm")</p>
+                        <p class="card-text"><strong>Genre: </strong> @movie.Key.Genre.Name</p>
+                        <p class="card-text"><strong>Description: </strong>@movie.Key.Description</p>
+                        <select name="showDates" class="form-select custom-select mt-2" style="width: 200px; background-color: #343a40; color: #fff; border: 1px solid #ccc;">
+                            @foreach (var date in movie.Value)
+                            {
+                                <option>@date?.ToString("dd MMM yyyy HH:mm")</option>
+                            }
+                        </select>
                     </div>
-                    <a asp-action="AddReservation" asp-route-showTimeId="@showTime.Id" asp-route-userId="@ViewBag.UserId" class="btn btn-primary"><i class="bi bi-plus-circle"></i>Reserve seat</a>
+                    <a asp-action="AddReservation" asp-route-showTimeId="@movie.Key.Id" asp-route-userId="@ViewBag.UserId" class="btn btn-primary"><i class="bi bi-plus-circle"></i>Reserve seat</a>
                 </div>
             </div>
         }

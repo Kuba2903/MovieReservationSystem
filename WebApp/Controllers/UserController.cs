@@ -43,18 +43,38 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Index(int? genre, DateTime? dateFrom, DateTime? dateTo)
         {
 
-            var films = _context.ShowTimes.Include(x => x.Movie).
+            var films = await _context.ShowTimes.Include(x => x.Movie).
                 ThenInclude(x => x.Genre).Where(x => x.ShowDate.HasValue
-                && x.ShowDate >= DateTime.Today);
+                && x.ShowDate >= DateTime.Today).GroupBy(x => x.Movie)
+                .ToDictionaryAsync(g => g.Key,
+                                        g => g.Select(x => x.ShowDate).ToList());
 
             if (genre.HasValue)
-                films = films.Where(x => x.Movie.GenreId == genre);
+                films = films.Where(x => x.Key.GenreId == genre).ToDictionary(g => g.Key,
+                    g => g.Value);
 
-            if(dateFrom.HasValue)
-                films = films.Where(x => x.ShowDate >= dateFrom);
+            if (dateFrom.HasValue)
+            {
+                films = films
+                    .Select(kvp => new KeyValuePair<Movie, List<DateTime?>>(
+                        kvp.Key,
+                        kvp.Value.Where(d => d >= dateFrom.Value).ToList()
+                    ))
+                    .Where(kvp => kvp.Value.Any()) // Ensure only movies with matching dates are included
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+
 
             if (dateTo.HasValue)
-                films = films.Where(x => x.ShowDate <= dateTo);
+            {
+                films = films
+                    .Select(kvp => new KeyValuePair<Movie, List<DateTime?>>(
+                        kvp.Key,
+                        kvp.Value.Where(d => d <= dateTo.Value).ToList()
+                    ))
+                    .Where(kvp => kvp.Value.Any()) // Ensure only movies with matching dates are included
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
 
             ViewBag.Genres = await _management.GetAll<Genre>();
             ViewBag.UserId = await GetUser();
