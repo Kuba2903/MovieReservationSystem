@@ -45,7 +45,7 @@ namespace WebApp.Controllers
 
             var films = await _context.ShowTimes.Include(x => x.Movie).
                 ThenInclude(x => x.Genre).Where(x => x.ShowDate.HasValue
-                && x.ShowDate >= DateTime.Today).GroupBy(x => x.Movie)
+                && x.ShowDate >= DateTime.Now).GroupBy(x => x.Movie)
                 .ToDictionaryAsync(g => g.Key,
                                         g => g.Select(x => x.ShowDate).ToList());
 
@@ -198,11 +198,12 @@ namespace WebApp.Controllers
         public async Task<IActionResult> CancelReservation(SeatReservation findReservation)
         {
             TimeSpan hour = new TimeSpan(36000000000);
+
             var hourFromNow = DateTime.Now.TimeOfDay.Add(hour);
             
             var showDate = await _context.ShowTimes.FirstOrDefaultAsync(x =>
                  x.SeatReservations.Contains(findReservation) && x.ShowDate.HasValue &&
-                 x.ShowDate.Value.Hour > hourFromNow.TotalHours);
+                 x.ShowDate.Value.Hour > hourFromNow.TotalHours || x.ShowDate > DateTime.Now);
 
             if (showDate != null)
             {

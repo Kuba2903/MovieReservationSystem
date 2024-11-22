@@ -1,9 +1,7 @@
 ﻿@using Data.Models
-@model Dictionary<Movie,List<DateTime?>>
+@model Dictionary<Movie, List<DateTime?>>
 @{
 }
-
-@* <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> *@
 
 <div class="container mt-4">
 
@@ -33,15 +31,13 @@
 
         <div class="col-md-12 text-end">
             <button type="submit" class="btn btn-primary">Apply Filters</button>
-            <a href="@Url.Action("Index", new { genre = ""})" class="btn btn-secondary">Clear Filters</a>
+            <a href="@Url.Action("Index", new { genre = "" })" class="btn btn-secondary">Clear Filters</a>
         </div>
     </form>
 
     <div class="row">
         @foreach (var movie in Model)
         {
-            //var movie = showTime.Movie;
-
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     <h5 class="card-title text-center">@movie.Key.Title</h5>
@@ -49,16 +45,33 @@
                     <div class="card-body">
                         <p class="card-text"><strong>Genre: </strong> @movie.Key.Genre.Name</p>
                         <p class="card-text"><strong>Description: </strong>@movie.Key.Description</p>
-                        <select name="showDates" class="form-select custom-select mt-2" style="width: 200px; background-color: #343a40; color: #fff; border: 1px solid #ccc;">
-                            @foreach (var date in movie.Value)
+                        <select id="showIdSelect-@movie.Key.Id" class="form-select custom-select mt-2"
+                                style="width: 200px; background-color: #343a40; color: #fff; border: 1px solid #ccc;"
+                                onchange="updateReservationLink(@movie.Key.Id)">
+                            @foreach (var showTime in movie.Key.ShowTimes)
                             {
-                                <option>@date?.ToString("dd MMM yyyy HH:mm")</option>
+                                <option value="@showTime.Id">@showTime.ShowDate?.ToString("dd MMM yyyy HH:mm")</option>
                             }
                         </select>
                     </div>
-                    <a asp-action="AddReservation" asp-route-showTimeId="@movie.Key.Id" asp-route-userId="@ViewBag.UserId" class="btn btn-primary"><i class="bi bi-plus-circle"></i>Reserve seat</a>
+                    <a id="reserveLink-@movie.Key.Id" asp-action="AddReservation"
+                       asp-route-showTimeId="" asp-route-userId="@ViewBag.UserId"
+                       class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i>Reserve seat
+                    </a>
                 </div>
             </div>
         }
     </div>
 </div>
+
+<script>
+    function updateReservationLink(movieId) {
+        const select = document.getElementById(`showIdSelect-${movieId}`);
+        const selectedValue = select.value;
+        const reserveLink = document.getElementById(`reserveLink-${movieId}`);
+
+        // Ustawienie parametru `showTimeId` w odnośniku
+        reserveLink.href = `@Url.Action("AddReservation")?showTimeId=${encodeURIComponent(selectedValue)}&userId=${reserveLink.getAttribute('asp-route-userId')}`;
+    }
+</script>
