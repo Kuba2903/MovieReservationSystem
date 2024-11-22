@@ -26,6 +26,9 @@ public partial class MovieReservationSystemContext : IdentityDbContext<Applicati
 
     public virtual DbSet<ShowTime> ShowTimes { get; set; }
 
+    public virtual DbSet<Ticket> Tickets { get; set; }
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Server=HP;Database=MovieReservationSystem;Trusted_Connection=True;Trust Server Certificate=True");
 
@@ -129,6 +132,15 @@ public partial class MovieReservationSystemContext : IdentityDbContext<Applicati
                 new Genre() { Id = 8 ,Name = "Thriller" },
                 new Genre() { Id = 9 ,Name = "Fantasy" },
                 new Genre() { Id = 10 ,Name = "Documentary" }
+            );
+
+
+        modelBuilder.Entity<Ticket>()
+            .HasData(
+                new Ticket() { Id = 1, Type = "Regular", Price = 20},
+                new Ticket() { Id = 2, Type = "Senior", Price = 10 },
+                new Ticket() { Id = 3, Type = "Student", Price = 15 },
+                new Ticket() { Id = 4, Type = "Kid", Price = 5 }
             );
 
 

@@ -12,8 +12,11 @@ public partial class SeatReservation
     public int ShowTimeId { get; set; }
 
     public string? UserId { get; set; }
+    public int? TicketId { get; set; }
 
     public virtual ShowTime ShowTime { get; set; } = null!;
 
     public virtual ApplicationUser? User { get; set; }
+
+    public virtual Ticket Ticket { get; set; }
 }
