@@ -1,5 +1,5 @@
 ﻿@using Data.Models
-@model IQueryable<ShowTime>
+@model Dictionary<Movie,List<DateTime>>
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -27,10 +27,18 @@
             @foreach (var show in Model)
             {
                 <tr>
-                    <td class="text-light">@show.Movie.Title</td>
-                    <td class="text-light">@show.Movie.Description</td>
-                    <td class="text-light">@show.Movie.Genre?.Name</td>
-                    <td class="text-light">@show.ShowDate?.ToString("dd MMM yyyy HH:mm")</td>
+                    <td class="text-light">@show.Key.Title</td>
+                    <td class="text-light">@show.Key.Description</td>
+                    <td class="text-light">@show.Key.Genre?.Name</td>
+                    <td class="text-light">
+                        <select name="showDates" class="form-select custom-select mt-2" style="width: 200px; background-color: #343a40; color: #fff; border: 1px solid #ccc;">
+                            @foreach (var date in show.Value)
+                            {
+                                <option>@date.ToString("dd MMM yyyy HH:mm")</option>
+                            }
+                        </select>
+                    </td>
+                    
                 </tr>
             }
         </tbody>

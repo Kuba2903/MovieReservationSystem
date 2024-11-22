@@ -16,13 +16,18 @@ namespace WebApp.Controllers
             this._context = _context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //displays show times in upcoming two weeks
 
-            var films = _context.ShowTimes.Include(x => x.Movie).
+            var films = await _context.ShowTimes.Include(x => x.Movie).
                 ThenInclude(x => x.Genre).Where(x => x.ShowDate.HasValue
-                && x.ShowDate >= DateTime.Today && x.ShowDate <= DateTime.Today.AddDays(30));
+                && x.ShowDate >= DateTime.Today && x.ShowDate <= DateTime.Today.AddDays(30))
+                .GroupBy(x => x.Movie).
+                ToDictionaryAsync(g => g.Key,
+                                       g => g.Select(x => x.ShowDate.Value).ToList());
+
+            
 
             return View(films);
         }
