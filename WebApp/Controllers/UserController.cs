@@ -195,19 +195,30 @@ namespace WebApp.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> CancelReservation(SeatReservation findReservation)
+        public async Task<IActionResult> CancelReservation(int showTimeId, string userId)
         {
             TimeSpan hour = new TimeSpan(36000000000);
 
             var hourFromNow = DateTime.Now.TimeOfDay.Add(hour);
-            
-            var showDate = await _context.ShowTimes.FirstOrDefaultAsync(x =>
-                 x.SeatReservations.Contains(findReservation) && x.ShowDate.HasValue &&
-                 x.ShowDate.Value.Hour > hourFromNow.TotalHours || x.ShowDate > DateTime.Now);
+
+            var findReservation = await _context.SeatReservations
+                .Include(r => r.ShowTime)
+                .FirstOrDefaultAsync(r => r.ShowTimeId == showTimeId && r.UserId == userId);
+
+            if (findReservation == null)
+            {
+                return NotFound("Reservation not found");
+            }
+
+            var showDate = await _context.ShowTimes
+                .FirstOrDefaultAsync(x => x.Id == showTimeId &&
+                                          x.ShowDate.HasValue &&
+                                          x.ShowDate.Value.Hour > hourFromNow.Hours ||
+                                          x.ShowDate > DateTime.Now);
 
             if (showDate != null)
             {
-                _context.SeatReservations.Remove(findReservation);
+                findReservation.UserId = null;
                 await _context.SaveChangesAsync();
             }
             else

@@ -38,7 +38,10 @@
                 <span class="text-danger d-block mb-3">@ViewBag.errorMessage</span>
 
                 <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-danger">Cancel Reservation</button>
+                    <button type="submit" asp-route-showTimeId =" @Model.ShowTimeId"
+                            asp-route-userId="@Model.UserId" class="btn btn-danger">
+                        Cancel Reservation
+                    </button>
                     <a class="btn btn-secondary" asp-action="CheckReservations">Go Back to Your Reservations</a>
                 </div>
             </form>
