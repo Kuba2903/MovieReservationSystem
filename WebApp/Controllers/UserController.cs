@@ -93,6 +93,9 @@ namespace WebApp.Controllers
             var seats = await _context.SeatReservations.Where(x => x.ShowTimeId == showTimeId)
                 .Select(x => x.Seat).Distinct().ToListAsync();
 
+            var tickets = await _context.Tickets.Distinct().ToDictionaryAsync(key => key.Type, 
+                value => value.Price);
+
             var occupiedSeats = await _context.SeatReservations
                 .Where(x => x.ShowTimeId == showTimeId && x.UserId != null)
                 .GroupBy(x => x.Sector)
@@ -108,6 +111,7 @@ namespace WebApp.Controllers
             ViewBag.seatsLeft = (sectors.Count * seats.Count) - occupiedSeats.Count;
             ViewBag.Sectors = sectors;
             ViewBag.Seats = seats;
+            ViewBag.Tickets = tickets;
             ViewBag.Occup = occupiedSeats;
 
             return View(new SeatReservation() { ShowTimeId = showTimeId});
@@ -115,7 +119,7 @@ namespace WebApp.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> AddReservation(SeatReservation entity, string sector, string seat)
+        public async Task<IActionResult> AddReservation(SeatReservation entity, string sector, string seat, string ticket)
         {
             var existingReservation = await _context.SeatReservations
                 .FirstOrDefaultAsync(x => x.ShowTimeId == entity.ShowTimeId && x.Sector == sector && x.Seat == seat);
@@ -129,9 +133,12 @@ namespace WebApp.Controllers
                 var isContainingUser = await _context.SeatReservations.FirstOrDefaultAsync(x => x.ShowTimeId == entity.ShowTimeId
                 && x.UserId == id);
 
+                var ticketId = await _context.Tickets.FirstOrDefaultAsync(x => x.Type == ticket);
+
                 if (isContainingUser == null)
                 {
                     existingReservation.UserId = id;
+                    existingReservation.TicketId = ticketId.Id;
 
                     await _context.SaveChangesAsync();
                 }
@@ -164,7 +171,8 @@ namespace WebApp.Controllers
             var films = await _context.ShowTimes.Include(x => x.Movie).ThenInclude(x => x.Genre)
                 .Where(x => showTimesId.Contains(x.Id) && x.ShowDate >= DateTime.Now).ToListAsync();
 
-            var reservations = await _context.SeatReservations.Where(x => showTimesId.Contains(x.ShowTimeId))
+            var reservations = await _context.SeatReservations.Include(x => x.Ticket).
+                Where(x => showTimesId.Contains(x.ShowTimeId))
                 .ToListAsync();
 
             ViewBag.reservations = reservations;

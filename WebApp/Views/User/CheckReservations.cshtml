@@ -25,6 +25,7 @@
                         <p class="card-text"><strong>Show Date: </strong>@showTime.ShowDate.Value.ToString("yyyy-MM-dd HH:mm")</p>
                         <p class="card-text"><strong>Sector: </strong>@showTimeReservations.Sector</p>
                         <p class="card-text"><strong>Seat: </strong>@showTimeReservations.Seat</p>
+                        <p class="card-text"><strong>Ticket: </strong>@showTimeReservations.Ticket.Type</p>
                     </div>
                     <a asp-action="CancelReservation" asp-route-showTimeId="@showTime.Id" 
                     asp-route-userId="@ViewBag.UserId" class="btn btn-primary" 
