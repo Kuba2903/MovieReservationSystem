@@ -45,19 +45,20 @@
                     <div class="card-body">
                         <p class="card-text"><strong>Genre: </strong> @movie.Key.Genre.Name</p>
                         <p class="card-text"><strong>Description: </strong>@movie.Key.Description</p>
-                        <select id="showIdSelect-@movie.Key.Id" class="form-select custom-select mt-2"
-                                style="width: 200px; background-color: #343a40; color: #fff; border: 1px solid #ccc;"
+                        <select id="showIdSelect-@movie.Key.Id"
+                                class="form-select custom-select mt-2"
                                 onchange="updateReservationLink(@movie.Key.Id)">
+                            <option value="">Choose date</option>
                             @foreach (var showTime in movie.Key.ShowTimes)
                             {
                                 <option value="@showTime.Id">@showTime.ShowDate?.ToString("dd MMM yyyy HH:mm")</option>
                             }
                         </select>
                     </div>
-                    <a id="reserveLink-@movie.Key.Id" asp-action="AddReservation"
-                       asp-route-showTimeId="" asp-route-userId="@ViewBag.UserId"
+                    <a id="reserveLink-@movie.Key.Id"
+                       href="#"
                        class="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i>Reserve seat
+                        <i class="bi bi-plus-circle"></i> Reserve seat
                     </a>
                 </div>
             </div>
@@ -71,7 +72,15 @@
         const selectedValue = select.value;
         const reserveLink = document.getElementById(`reserveLink-${movieId}`);
 
-        // Ustawienie parametru `showTimeId` w odnośniku
-        reserveLink.href = `@Url.Action("AddReservation")?showTimeId=${encodeURIComponent(selectedValue)}&userId=${reserveLink.getAttribute('asp-route-userId')}`;
+        if (selectedValue) {
+
+            const baseUrl = '@Url.Action("AddReservation")'; 
+            const userId = '@ViewBag.UserId'; 
+            reserveLink.href = `${baseUrl}?showTimeId=${selectedValue}&userId=${userId}`;
+            reserveLink.classList.remove("disabled"); 
+        } else {
+            reserveLink.href = "#";
+            reserveLink.classList.add("disabled");
+        }
     }
 </script>
