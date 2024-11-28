@@ -19,6 +19,7 @@ builder.Services.AddDbContext<MovieReservationSystemContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Server=HP;Database=MovieReservationSystem;Trusted_Connection=True;Trust Server Certificate=True")));
 
 builder.Services.AddScoped<IMovieManagement, MovieManagement>();
+builder.Services.AddScoped<IPaymentService, StripePaymentService>();
 builder.Services.AddSingleton<IEmailSender,EmailSender>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

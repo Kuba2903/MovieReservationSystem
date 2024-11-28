@@ -1,0 +1,32 @@
+﻿@using Data.Models;
+@model List<PaymentItem>
+
+<h1>Payment Summary</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Description</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Description</td>
+                <td>@item.Amount.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Total: @Model.Sum(x => x.Amount).ToString("C")</h3>
+
+<form asp-action="ProcessPayment" method="post">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <input type="hidden" name="tickets[@i].Type" value="@Model[i].Description" />
+        <input type="hidden" name="tickets[@i].Price" value="@Model[i].Amount" />
+    }
+    <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+</form>
