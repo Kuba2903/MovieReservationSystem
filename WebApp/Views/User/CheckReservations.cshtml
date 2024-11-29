@@ -35,16 +35,19 @@
                         <input type="hidden" name="reservations[@Model.IndexOf(showTime)].Seat" value="@showTimeReservations.Seat" />
                         <input type="hidden" name="reservations[@Model.IndexOf(showTime)].Price" value="@showTimeReservations.Ticket.Price" />
 
-
+                        <div class="custom-checkbox">
+                            <input type="checkbox" id="checkbox-@showTime.Id" name="selectedReservations" value="@showTime.Id" />
+                            <label for="checkbox-@showTime.Id"></label>
+                        </div>
                         <a asp-action="CancelReservation" asp-route-showTimeId="@showTime.Id" 
                         asp-route-userId="@ViewBag.UserId" class="btn btn-primary" 
                         style="background-color:red"><i class="bi bi-plus-circle"></i>Cancel reservation</a>
-                        
-                        <button type="submit" class="btn btn-success">Pay</button>
 
                     </div>
+                    
                 </div>
             }
+            <button type="submit" class="btn btn-success">Pay</button>
         </div>
     </div>
 </form>

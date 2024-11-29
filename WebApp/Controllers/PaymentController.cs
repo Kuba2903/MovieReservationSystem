@@ -17,7 +17,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetPaymentDetails(List<SeatReservation> reservations)
+        public IActionResult GetPaymentDetails(List<SeatReservation> reservations, List<int> selectedReservations)
         {
             if (reservations == null || !reservations.Any())
             {
@@ -27,7 +27,7 @@ namespace WebApp.Controllers
             var allReservations = _context.SeatReservations
                 .Include(r => r.Ticket)
                 .Include(r => r.ShowTime)
-                    .ThenInclude(st => st.Movie)
+                    .ThenInclude(st => st.Movie).Where(x => selectedReservations.Contains(x.ShowTimeId))
                 .ToList();
 
 
