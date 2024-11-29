@@ -55,11 +55,14 @@
                             }
                         </select>
                     </div>
-                    <a id="reserveLink-@movie.Key.Id"
-                       href="#"
-                       class="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i> Reserve seat
-                    </a>
+                    @if (User.IsInRole("User"))
+                    {
+                        <a id="reserveLink-@movie.Key.Id"
+                        href="#"
+                        class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Reserve seat
+                        </a>
+                    }
                 </div>
             </div>
         }

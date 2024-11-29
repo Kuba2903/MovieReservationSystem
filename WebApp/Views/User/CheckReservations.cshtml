@@ -6,10 +6,12 @@
 <h1>Your reservations for show times</h1>
 <h3>You can cancel your reservation at least one hour before the start of the movie</h3>
 
-<form asp-controller="Payment" asp-action="GetPaymentDetails" method="get">
+<form asp-controller="Payment" asp-action="GetPaymentDetails" method="get" onsubmit="isAnyChecked(event)">
 
     <div>
         <div class="row">
+            <div id="alert-message" class="alert alert-warning" style="display: none;"></div>
+
             @foreach (var showTime in Model)
             {
             
@@ -51,3 +53,29 @@
         </div>
     </div>
 </form>
+
+<script>
+    function isAnyChecked(event){
+        var checkBoxes = document.getElementsByClassName("custom-checkbox");
+        var message = document.getElementById("alert-message");
+        var anyChecked = false;
+
+        // Check if at least one checkbox is checked
+        for (var i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                anyChecked = true;
+                break;
+            }
+        }
+
+        if (!anyChecked) {
+            // Show a warning message and prevent form submission
+            message.innerHTML = "Warning! Select the movies you want to pay for.";
+            message.style.display = "block";
+            event.preventDefault();
+        } else {
+            // Hide the warning message if everything is okay
+            message.style.display = "none";
+        }
+    }
+</script>
