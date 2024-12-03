@@ -139,6 +139,7 @@ namespace WebApp.Controllers
                 {
                     existingReservation.UserId = id;
                     existingReservation.TicketId = ticketId.Id;
+                    existingReservation.PaymentStatus = "unpayed";
 
                     await _context.SaveChangesAsync();
                 }

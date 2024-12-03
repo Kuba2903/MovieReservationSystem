@@ -17,7 +17,7 @@
             
                var showTimeReservations = ((IEnumerable<SeatReservation>)ViewBag.reservations)
                 .FirstOrDefault(r => r.ShowTimeId == showTime.Id && r.UserId == ViewBag.UserId);
-            
+                
 
                 var movie = showTime.Movie;
 
@@ -30,6 +30,7 @@
                             <p class="card-text"><strong>Sector: </strong>@showTimeReservations.Sector</p>
                             <p class="card-text"><strong>Seat: </strong>@showTimeReservations.Seat</p>
                             <p class="card-text"><strong>Ticket: </strong>@showTimeReservations.Ticket.Type</p>
+                            <p class="card-text"><strong>Payment status: </strong>@showTimeReservations.PaymentStatus</p>
                         </div>
 
                         <input type="hidden" name="reservations[@Model.IndexOf(showTime)].ShowTimeId" value="@showTime.Id" />
@@ -37,10 +38,13 @@
                         <input type="hidden" name="reservations[@Model.IndexOf(showTime)].Seat" value="@showTimeReservations.Seat" />
                         <input type="hidden" name="reservations[@Model.IndexOf(showTime)].Price" value="@showTimeReservations.Ticket.Price" />
 
-                        <div class="custom-checkbox">
-                            <input type="checkbox" id="checkbox-@showTime.Id" name="selectedReservations" value="@showTime.Id" />
-                            <label for="checkbox-@showTime.Id"></label>
-                        </div>
+                        @if (showTimeReservations.PaymentStatus != "payed")
+                        {
+                            <div class="custom-checkbox">
+                                <input type="checkbox" id="checkbox-@showTime.Id" name="selectedReservations" value="@showTime.Id" />
+                                <label for="checkbox-@showTime.Id"></label>
+                            </div>
+                        }
                         <a asp-action="CancelReservation" asp-route-showTimeId="@showTime.Id" 
                         asp-route-userId="@ViewBag.UserId" class="btn btn-primary" 
                         style="background-color:red"><i class="bi bi-plus-circle"></i>Cancel reservation</a>
