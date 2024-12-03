@@ -2,6 +2,7 @@
 using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using WebApp.Services.Implementations;
 
 namespace WebApp.Controllers
@@ -43,6 +44,13 @@ namespace WebApp.Controllers
                 Amount = (decimal)r.Ticket.Price,
             }).ToList();
 
+            var jsonSettings = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore // Ignorowanie cyklicznych referencji
+            };
+
+            TempData["reservations"] = JsonConvert.SerializeObject(detailedReservations,jsonSettings);
+
             return View("PaymentDetails", paymentDetails);
         }
 
@@ -76,6 +84,30 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult Success()
         {
+            if (TempData["reservations"] is string reservationsJson)
+            {
+                var reservations = JsonConvert.DeserializeObject<List<SeatReservation>>(reservationsJson);
+
+
+                var reservationIds = reservations
+                    .Select(r => new { r.Sector, r.Seat,r.ShowTimeId })
+                    .ToList();
+
+                var seats = _context.SeatReservations
+                    .AsEnumerable()
+                    .Where(r => reservationIds.Any(id => id.Sector == r.Sector && id.Seat == r.Seat 
+                    && id.ShowTimeId == r.ShowTimeId))
+                    .ToList();
+
+                foreach (var seat in seats)
+                {
+                    seat.PaymentStatus = "payed";
+                }
+                _context.SaveChanges();
+
+                return View("Success");
+            }
+
             return View("Success");
         }
 
