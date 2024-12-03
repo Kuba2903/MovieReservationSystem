@@ -56,7 +56,7 @@
 
 <script>
     function isAnyChecked(event){
-        var checkBoxes = document.getElementsByClassName("custom-checkbox");
+        var checkBoxes = document.querySelectorAll('input[type="checkbox"][name="selectedReservations"]');
         var message = document.getElementById("alert-message");
         var anyChecked = false;
 
@@ -72,6 +72,9 @@
             // Show a warning message and prevent form submission
             message.innerHTML = "Warning! Select the movies you want to pay for.";
             message.style.display = "block";
+
+            message.scrollIntoView({ behavior: "smooth", block: "center" });
+
             event.preventDefault();
         } else {
             // Hide the warning message if everything is okay
