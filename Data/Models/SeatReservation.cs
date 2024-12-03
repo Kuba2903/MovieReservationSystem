@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Data.Models;
 
@@ -13,6 +14,12 @@ public partial class SeatReservation
 
     public string? UserId { get; set; }
     public int? TicketId { get; set; }
+
+    /// <summary>
+    /// payment status of the reservation for example is it paid or not
+    /// </summary>
+    [MaxLength(150)]
+    public string? PaymentStatus { get; set; }
 
     public virtual ShowTime ShowTime { get; set; } = null!;
 
